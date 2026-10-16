@@ -1,20 +1,22 @@
 {
-  "name": "apleema-connect",
+  "name": "apleema",
   "version": "1.0.0",
-  "description": "apleema.ai - Secure X Account Connection & Viewer",
+  "description": "Premium GitHub-to-Vercel Deployment Platform",
   "main": "server.js",
+  "type": "module",
+  "engines": {
+    "node": "20.18.0"
+  },
   "scripts": {
     "start": "node server.js",
-    "audit": "npm audit"
+    "dev": "node --watch server.js",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "firebase-admin": "^12.1.0",
-    "node-fetch": "^2.7.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
+    "express-session": "^1.18.0"
   }
 }
