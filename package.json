@@ -1,0 +1,20 @@
+{
+  "name": "apleema-connect",
+  "version": "1.0.0",
+  "description": "apleema.ai - Secure X Account Connection & Viewer",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "audit": "npm audit"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.1.0",
+    "node-fetch": "^2.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

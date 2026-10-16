@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>apleema.ai — Secure X Account Dashboard</title>
+  <meta name="description" content="Comprehensive, real-time X account dashboard with Vercel-inspired minimalism.">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="icon" href="apleema.png" type="image/png">
+  <link rel="apple-touch-icon" href="apleema.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="error-alert" class="alert error" role="alert" aria-live="polite" style="display: none;"></div>
+  <div id="success-alert" class="alert success" role="status" aria-live="polite" style="display: none;"></div>
+
+  <div id="app-loading" class="loading-screen" aria-hidden="true">
+    <div class="loading-content">
+      <img src="apleema.png" alt="apleema.ai logo" class="loading-logo">
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- Login View -->
+  <main id="login-view" class="auth-container" style="display: none;">
+    <div class="auth-card">
+      <img src="apleema.png" alt="apleema.ai logo" class="brand-logo">
+      <h1 class="brand-title">apleema.ai</h1>
+      <p class="brand-subtitle">Your X account, connected with precision.</p>
+      <p class="auth-description">
+        Securely authenticate with Google and explore your X account metrics, posts, replies, media, likes, followers, and following.
+      </p>
+
+      <button id="google-login-btn" class="btn primary-btn google-btn" type="button">
+        <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.95H1.26v3.15C3.28 21.31 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.25c-.25-.72-.38-1.49-.38-2.25s.13-1.53.38-2.25V6.6H1.26C.46 8.22 0 10.04 0 12s.46 3.78 1.26 5.4l4.02-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.28 2.69 1.26 6.6l4.02 3.15c.95-2.84 3.6-4.95 6.72-4.95z"/>
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+
+      <p class="privacy-reassurance">Protected by Firebase Authentication &amp; TLS encryption.</p>
+    </div>
+  </main>
+
+  <!-- Dashboard Layout -->
+  <div id="dashboard-view" class="dashboard-app-layout" style="display: none;">
+    
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobile-drawer-overlay" class="drawer-overlay" aria-hidden="true"></div>
+
+    <!-- Sidebar Navigation (Desktop Sidebar & Mobile Slide-out Drawer) -->
+    <aside id="sidebar-nav-drawer" class="sidebar">
+      <div class="sidebar-header">
+        <img src="apleema.png" alt="apleema.ai logo" class="sidebar-logo">
+        <span class="sidebar-brand-name">apleema.ai</span>
+        <button id="drawer-close-btn" class="drawer-close-btn" aria-label="Close menu">&times;</button>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="overview">Overview</button>
+        <button class="nav-item" data-tab="posts">My Posts</button>
+        <button class="nav-item" data-tab="replies">Replies</button>
+        <button class="nav-item" data-tab="media">Media</button>
+        <button class="nav-item" data-tab="likes">Likes</button>
+        <button class="nav-item" data-tab="followers">Followers</button>
+        <button class="nav-item" data-tab="following">Following</button>
+        <button class="nav-item" data-tab="settings">Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <span id="user-email-display" class="user-email-badge"></span>
+        <button id="logout-btn" class="btn secondary-btn small-btn" type="button">Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content-area">
+      <!-- Responsive Header with Hamburger & Three-Dot Menu -->
+      <header class="dashboard-header-bar">
+        <div class="header-left-group">
+          <button id="hamburger-menu-btn" class="hamburger-btn" aria-label="Open navigation menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="header-brand">
+            <img src="apleema.png" alt="apleema.ai logo" class="header-logo">
+            <span class="header-title">apleema.ai</span>
+          </div>
+        </div>
+
+        <!-- Three-Dot Menu Container -->
+        <div class="three-dot-menu-container">
+          <button id="three-dot-btn" class="three-dot-btn" aria-label="Dashboard options menu" aria-haspopup="true" aria-expanded="false">
+            &#8942;
+          </button>
+          <div id="three-dot-dropdown" class="three-dot-dropdown" role="menu">
+            <button role="menuitem" onclick="menuActionProfile()">My Profile</button>
+            <button role="menuitem" onclick="menuActionRefresh()">Refresh Dashboard</button>
+            <button role="menuitem" onclick="menuActionConnections()">Account Connections</button>
+            <button role="menuitem" onclick="menuActionSettings()">Settings</button>
+            <button role="menuitem" onclick="menuActionHelp()">Help &amp; API Access</button>
+            <div class="dropdown-divider"></div>
+            <button role="menuitem" class="dropdown-danger" onclick="menuActionLogout()">Log Out</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Connect X Prompt View -->
+      <section id="x-connect-card" class="card connection-card" style="display: none;">
+        <img src="apleema.png" alt="apleema.ai logo" class="card-brand-icon">
+        <h2>Connect your X account</h2>
+        <p class="connection-subtitle">
+          Authorize access to securely view your X profile, posts, replies, media, likes, followers, and following.
+        </p>
+        <div class="permissions-summary">
+          <span>Required Scopes:</span>
+          <code>users.read</code> &bull; <code>tweet.read</code> &bull; <code>follows.read</code> &bull; <code>like.read</code>
+        </div>
+        <button id="connect-x-btn" class="btn primary-btn" type="button">
+          <span>Connect X (Twitter)</span>
+        </button>
+      </section>
+
+      <!-- Dashboard Sections Container -->
+      <div id="dashboard-sections-container" style="display: none;">
+        
+        <!-- Overview -->
+        <section id="section-overview" class="dashboard-section active">
+          <div class="section-title-row">
+            <h2>Account Overview</h2>
+            <button class="refresh-btn" onclick="refreshDashboardData()">🔄 Refresh All</button>
+          </div>
+          
+          <div class="profile-banner-card card">
+            <div id="profile-banner-bg" class="profile-banner"></div>
+            <div class="profile-main-info">
+              <img id="overview-avatar" src="" alt="Avatar" class="profile-avatar-large">
+              <div class="profile-titles">
+                <h3 id="overview-name">Name</h3>
+                <p id="overview-username" class="secondary-text">@username</p>
+                <span id="overview-verified-badge" class="verified-pill" style="display:none;">Verified Account</span>
+              </div>
+              <button id="overview-disconnect-btn" class="btn secondary-btn danger-btn small-btn" type="button">Disconnect X</button>
+            </div>
+            <p id="overview-bio" class="profile-bio"></p>
+            <div id="profile-stats" class="profile-stats-grid">
+              <div class="stat-box"><strong>0</strong> Followers</div>
+              <div class="stat-box"><strong>0</strong> Following</div>
+              <div class="stat-box"><strong>0</strong> Total Posts</div>
+            </div>
+            <div class="profile-meta-footer">
+              <span id="overview-created">Joined Date</span>
+              <a id="overview-profile-url" href="#" target="_blank" rel="noopener">Open on X &rarr;</a>
+            </div>
+          </div>
+
+          <div class="overview-quick-links">
+            <div class="card quick-link-card" onclick="switchTab('followers')">
+              <h4>Followers &rarr;</h4>
+              <p id="quick-follower-count">0 followers connected</p>
+            </div>
+            <div class="card quick-link-card" onclick="switchTab('following')">
+              <h4>Following &rarr;</h4>
+              <p id="quick-following-count">0 accounts followed</p>
+            </div>
+          </div>
+
+          <div class="card content-card">
+            <div class="section-header">
+              <h3>Latest Posts</h3>
+              <button class="text-link-btn" onclick="switchTab('posts')">View All &rarr;</button>
+            </div>
+            <div id="overview-posts-notice" class="api-notice" style="display:none;"></div>
+            <div id="overview-latest-posts" class="posts-list"></div>
+          </div>
+        </section>
+
+        <!-- My Posts -->
+        <section id="section-posts" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>My Posts</h2>
+            <div class="header-action-group">
+              <span id="last-refreshed-time" class="timestamp-badge"></span>
+              <button class="refresh-btn" onclick="refreshDashboardData()">🔄 Refresh</button>
+            </div>
+          </div>
+          <div id="posts-api-notice" class="api-notice" style="display:none;"></div>
+          <div id="my-posts-list" class="posts-list"></div>
+        </section>
+
+        <!-- Replies -->
+        <section id="section-replies" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Replies</h2>
+            <span class="api-badge">Conversation Context</span>
+          </div>
+          <div id="my-replies-list" class="posts-list"></div>
+        </section>
+
+        <!-- Media -->
+        <section id="section-media" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Media Posts</h2>
+            <span class="api-badge">Images &amp; Videos</span>
+          </div>
+          <div id="my-media-list" class="posts-list"></div>
+        </section>
+
+        <!-- Likes -->
+        <section id="section-likes" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Liked Posts</h2>
+            <span class="api-badge">Public Liked Tweets</span>
+          </div>
+          <div id="my-likes-list" class="posts-list"></div>
+        </section>
+
+        <!-- Followers -->
+        <section id="section-followers" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Followers</h2>
+            <span class="api-badge">Audience View</span>
+          </div>
+          <div id="followers-notice" class="api-notice" style="display:none;"></div>
+          <div id="followers-list" class="users-grid"></div>
+        </section>
+
+        <!-- Following -->
+        <section id="section-following" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Following Accounts</h2>
+            <span class="api-badge">Individual Dashboards</span>
+          </div>
+          <p class="section-instruction">Click any account below to inspect their dedicated live profile dashboard and posts.</p>
+          <div id="following-notice" class="api-notice" style="display:none;"></div>
+          <div id="following-list" class="users-grid"></div>
+        </section>
+
+        <!-- User Detail -->
+        <section id="section-user-detail" class="dashboard-section">
+          <button class="btn secondary-btn small-btn mb-16" onclick="switchTab('following')">&larr; Back to Following</button>
+          <div id="target-user-profile-card" class="card profile-banner-card"></div>
+          <div class="card content-card mt-16">
+            <h3>Account Posts</h3>
+            <div id="target-user-posts-list" class="posts-list"></div>
+          </div>
+        </section>
+
+        <!-- Settings -->
+        <section id="section-settings" class="dashboard-section">
+          <div class="section-title-row">
+            <h2>Dashboard Settings</h2>
+            <span class="api-badge">Security &amp; Connection</span>
+          </div>
+          <div class="card settings-card">
+            <h3>Connected X Account</h3>
+            <p>Your session is secured via Firebase Authentication and PKCE OAuth 2.0.</p>
+            <div class="settings-actions mt-16">
+              <button id="settings-disconnect-btn" class="btn secondary-btn danger-btn" type="button">Disconnect X Account</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="authentication.js"></script>
+  <script type="module" src="auth.js"></script>
+  <script type="module" src="app.js" defer></script>
+</body>
+</html>
