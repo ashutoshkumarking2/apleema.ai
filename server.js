@@ -1,12 +1,18 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const crypto = require("crypto");
-const fetch = require("node-fetch");
-const path = require("path");
-require("dotenv").config();
+import express from "express";
+import cookieParser from "cookie-parser";
+import crypto from "crypto";
+import fetch from "node-fetch";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+dotenv.config();
 
-const admin = require("firebase-admin");
+import admin from "firebase-admin";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Initialize Firebase Admin SDK securely using environment variables
 if (!admin.apps.length) {
   try {
     const privateKey = process.env.FIREBASE_PRIVATE_KEY 
@@ -22,6 +28,8 @@ if (!admin.apps.length) {
         })
       });
       console.log("Firebase Admin SDK initialized successfully.");
+    } else {
+      console.warn("Firebase Admin credentials missing or incomplete in environment variables.");
     }
   } catch (e) {
     console.error("Firebase Admin SDK initialization error:", e.message);
